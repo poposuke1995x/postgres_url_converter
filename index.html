@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Postgres Url Converter</title>
+</head>
+<body>
+  <h1>
+    Postgres Url Converter
+  </h1>
+<p>
+  herokuにデプロイする際、環境変数としてherokuによって自動で用意されたDATABASE_URLでは最新のpostgresqlドライバーに対応できずに例外が発生します。
+</p>
+<p>
+  そのため、URLのフォーマットを新しくする必要があります。詳しくは<a href="https://stackoverflow.com/questions/34741443/hikaricp-postgresql-driver-claims-to-not-accept-jdbc-url">こちらのサイト</a>を参照してください。
+</p>
+<p>DATABASE_URLをテキストエリアに貼り付けてエンターを押下すると変換されたURLを出力します。</p>
+<input type="text" id="input" placeholder="DATABASE_URLを入力">
+<div><h5 id="before"></h5></div>
+<div><h4 id="result"></h4></div>
+  
+</body>
+</html>
+
+<script>
+document.getElementById('input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    console.log(convert(e.target.value))
+    document.getElementById("before").innerHTML = "変換前: " + e.target.value
+    document.getElementById("result").innerHTML = "変換後: " + convert(e.target.value)
+    
+    
+
+  }
+})
+
+const convert = value => {
+  const parse_array = value.split(":")
+  const user = parse_array[1].replace('//', '')
+  const password_host = parse_array[2].split("@")
+  return "jdbc:postgresql://@" + password_host[1] + ":" + parse_array[3] + "?user=" + user + "&password=" + password_host[0]
+}
+</script>
+
